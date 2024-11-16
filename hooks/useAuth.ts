@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { getToken } from '@/services/authService'
 import { useFocusEffect, useRouter } from 'expo-router'
 import React from 'react'
 
@@ -10,7 +10,7 @@ export const useAuth = () => {
   useFocusEffect(
     React.useCallback(() => {
       const checkToken = async () => {
-        const token = await AsyncStorage.getItem('token')
+        const token = await getToken()
         if (!token) router.push('/login')
         else SetToken(token)
       }

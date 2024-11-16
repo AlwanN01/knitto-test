@@ -29,16 +29,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           {/* <Stack.Screen name='(tabs)' options={{ headerShown: false }} /> */}
           <Stack.Screen name='index' options={{ headerShown: false, title: 'Home' }} />
           <Stack.Screen name='login' options={{ headerShown: false, title: 'Login', headerTitle: 'Login Page' }} />
           <Stack.Screen name='+not-found' />
         </Stack>
-      </Provider>
-      <StatusBar style='auto' />
-    </ThemeProvider>
+        <StatusBar style='auto' />
+      </ThemeProvider>
+    </Provider>
   )
 }

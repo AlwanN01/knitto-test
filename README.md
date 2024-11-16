@@ -15,7 +15,35 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
     npx expo start
    ```
+3. **Create Environment Variables**
 
+   Sebelum memulai aplikasi, Anda perlu mengatur variabel lingkungan dengan membuat file `.env.local` berdasarkan file `.env.example`.
+
+   - **Langkah 1:** Salin file `.env.example` ke `.env.local`
+
+     ```bash
+     cp .env.example .env.local
+     ```
+
+   - **Langkah 2:** Buka file `.env.local` dan sesuaikan nilai variabel sesuai kebutuhan Anda.
+
+     ```env
+     # base url axios
+     EXPO_PUBLIC_API_URL=http://192.168.100.6:8081
+
+     PIXABAY_API_KEY=47080654-b5bde200a84742c72c8972f85
+     ```
+
+   **Catatan:**
+   - `EXPO_PUBLIC_API_URL` digunakan sebagai base URL untuk melakukan permintaan HTTP dengan Axios.
+   - `PIXABAY_API_KEY` adalah kunci API yang digunakan untuk mengakses layanan Pixabay. Pastikan untuk menjaga kerahasiaan kunci API ini dan **jangan membagikannya secara publik**.
+
+   - **Langkah 3:** Pastikan file `.env.local` diabaikan oleh sistem kontrol versi (Git) untuk menjaga keamanan informasi sensitif. Periksa atau tambahkan `.env.local` ke file `.gitignore` Anda.
+
+     ```gitignore
+     # Environment variables
+     .env.local
+     ```
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
@@ -24,16 +52,6 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
 ## Learn more
 
@@ -48,3 +66,8 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+Tentu! Berikut adalah versi **README** Anda yang telah diperbarui dengan instruksi untuk membuat file `.env.local` berdasarkan file `.env.example`. Instruksi ini akan membantu Anda atau pengembang lain untuk dengan mudah mengatur variabel lingkungan yang diperlukan untuk proyek Anda.
+
+---

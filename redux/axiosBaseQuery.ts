@@ -4,7 +4,7 @@ import type { AxiosRequestConfig, AxiosError } from 'axios'
 
 export const axiosBaseQuery =
   (
-    { baseUrl }: { baseUrl?: string } = { baseUrl: '/' }
+    { baseUrl }: { baseUrl?: string } = { baseUrl: process.env.EXPO_PUBLIC_API_URL }
   ): BaseQueryFn<
     {
       url: string

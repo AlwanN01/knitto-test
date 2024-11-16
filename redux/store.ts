@@ -1,14 +1,18 @@
+import { authSlice } from '@/redux/features/authSlice'
 import { imagesApi } from '@/redux/services/imagesApi'
+import { loginApi } from '@/redux/services/loginApi'
 import { configureStore } from '@reduxjs/toolkit'
-import { setupListeners } from '@reduxjs/toolkit/dist/query'
+import { setupListeners } from '@reduxjs/toolkit/query'
 
 export const store = configureStore({
   reducer: {
+    [authSlice.reducerPath]: authSlice.reducer,
+    [loginApi.reducerPath]: loginApi.reducer,
     [imagesApi.reducerPath]: imagesApi.reducer
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: getDefaultMiddleware => {
-    return getDefaultMiddleware().concat([imagesApi.middleware])
+    return getDefaultMiddleware().concat([imagesApi.middleware, loginApi.middleware])
   }
 })
 setupListeners(store.dispatch)

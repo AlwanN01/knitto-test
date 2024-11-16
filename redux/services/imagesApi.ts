@@ -1,28 +1,19 @@
 import { axiosBaseQuery } from '@/redux/axiosBaseQuery'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-const key = process.env.PIXABAY_API_KEY!
-
+const key = process.env.EXPO_PUBLIC_PIXABAY_API_KEY!
 export const imagesApi = createApi({
   reducerPath: 'imagesApi',
   baseQuery: axiosBaseQuery({ baseUrl: 'https://pixabay.com/api' }),
   endpoints(build) {
     return {
       getImages: build.query<GetImagesResponse, GetImagesQueryArg>({
-        query: ({ searchTerm, page = 1, perPage = 10 }) => {
-          const url = new URL(`/?key=${key}`)
-
-          if (searchTerm) url.searchParams.set('q', encodeURIComponent(searchTerm))
-
-          url.searchParams.set('per_page', String(perPage))
-          url.searchParams.set('page', String(page))
-          url.searchParams.set('image_type', 'photo')
-
-          return { url: url.toString(), method: 'get' }
-        }
-      }),
-      mutation: build.mutation({
-        query: () => ({ url: '/mutation', method: 'post' })
+        query: ({ token, searchTerm, page = 1, perPage = 10 }) => ({
+          url: `/?key=${token}${
+            searchTerm ? `&q=${encodeURIComponent(searchTerm)}` : ''
+          }&image_type=photo&pretty=true&per_page=${perPage}&page=${page}`,
+          method: 'get'
+        })
       })
     }
   }
@@ -30,6 +21,7 @@ export const imagesApi = createApi({
 export const { useGetImagesQuery } = imagesApi
 
 export interface GetImagesQueryArg {
+  token?: string | null
   searchTerm?: string
   page?: number
   perPage?: number

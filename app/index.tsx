@@ -15,31 +15,27 @@ import {
   FlatList,
   Image,
   TextInput,
+  TouchableOpacity,
   type NativeScrollEvent,
   type NativeSyntheticEvent
 } from 'react-native'
-import { useDebounceState } from '@/hooks/useDebounce'
 import { isCloseToBottom } from '@/lib/utils'
 import { useMergeState } from '@/hooks/useMergeState'
-import { StatusBar } from 'expo-status-bar'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+const initState = {
+  textSearch: '',
+  searchTerm: '',
+  page: 1,
+  perPage: 10,
+  images: [] as GetImagesResponse['hits']
+}
 
 export default function HomePage() {
   const token = useAuth()
   const router = useRouter()
 
-  const [state, setState] = useMergeState({
-    text: '',
-    searchTerm: '',
-    page: 1,
-    perPage: 10,
-    images: [] as GetImagesResponse['hits']
-  })
-  const { images, text, searchTerm, page, perPage } = state
-
-  // const [text, setText] = React.useState<string>()
-  // const [searchTerm, setSearchTerm] = React.useState<string>()
-  // const [searchTerm, setSearchTerm] = useDebounceState<string>()
-  // const [images, setImages] = React.useState<GetImagesResponse['hits']>([])
+  const [{ images, textSearch, searchTerm, page, perPage }, setState] = useMergeState(initState)
 
   const { data, error, isLoading, isFetching } = useGetImagesQuery(
     { searchTerm, token, page, perPage },
@@ -54,19 +50,20 @@ export default function HomePage() {
   }, [data])
 
   const handleSearch = () => {
-    // setImages([])
-    // setSearchTerm(text)
-    setState({ searchTerm: text, images: [] })
+    setState({ searchTerm: textSearch, images: [] })
   }
+
   const handleScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (isCloseToBottom(nativeEvent) && !isFetching) {
       setState(prevState => ({ page: prevState.page + 1 }))
     }
   }
+
   const handleLogout = async () => {
     await removeToken()
     router.replace('/login')
   }
+
   if (error) {
     const errorMessage = (error as QueryError).data || 'Unknown error'
     return <Text>Error: {errorMessage}</Text>
@@ -82,8 +79,8 @@ export default function HomePage() {
           style={styles.input}
           placeholder='Search Images'
           placeholderTextColor='gray'
-          value={text}
-          onChangeText={text => setState({ text })}
+          value={textSearch}
+          onChangeText={text => setState({ textSearch: text })}
           onSubmitEditing={handleSearch}
         />
         <Pressable onPress={handleLogout}>
@@ -95,36 +92,77 @@ export default function HomePage() {
       {(!token || isLoading || isFetching) && (
         <ActivityIndicator style={{ position: 'absolute', top: '50%', left: '50%' }} size='large' />
       )}
-      <View>
-        <FlatList
-          data={images}
-          renderItem={({ item }) => <ImageCard image={item} />}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={{ gap: 10, margin: 10 }}
-          onScroll={handleScroll}
-          // scrollEventThrottle={30}
-        />
-      </View>
-      {/* <StatusBar style='auto' /> */}
+      <FlatList
+        data={images}
+        renderItem={({ item }) => <ImageCard image={item} />}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={{ gap: 10, margin: 10, paddingBottom: 30 }}
+        onScroll={handleScroll}
+        // scrollEventThrottle={30}
+      />
     </SafeAreaView>
   )
 }
+type Hits = GetImagesResponse['hits'][0]
 
-const ImageCard = ({ image }: { image: GetImagesResponse['hits'][0] }) => {
+const ImageCard = ({ image }: { image: Hits }) => {
+  const [isBookmarked, setIsBookmarked] = React.useState(false)
+
+  const toggleBookmark = async () => {
+    try {
+      const bookmarks = await AsyncStorage.getItem('bookmarks')
+      let parsedBookmarks = bookmarks ? JSON.parse(bookmarks) : []
+
+      if (isBookmarked) {
+        parsedBookmarks = parsedBookmarks.filter((item: Hits) => item.id !== image.id)
+        setIsBookmarked(false)
+      } else {
+        parsedBookmarks.push(image)
+        setIsBookmarked(true)
+      }
+
+      await AsyncStorage.setItem('bookmarks', JSON.stringify(parsedBookmarks))
+    } catch (error) {
+      console.error('Error toggling bookmark:', error)
+    }
+  }
+  React.useEffect(() => {
+    const checkBookmark = async () => {
+      try {
+        const bookmarks = await AsyncStorage.getItem('bookmarks')
+        const parsedBookmarks = bookmarks ? JSON.parse(bookmarks) : []
+        const exists = parsedBookmarks.find((item: Hits) => item.id === image.id)
+        if (exists) {
+          setIsBookmarked(true)
+        }
+      } catch (error) {
+        console.error('Error checking bookmark:', error)
+      }
+    }
+    checkBookmark()
+  }, [])
+
   return (
     <View style={styles.cardContainer}>
       <Image source={{ uri: image.webformatURL }} style={styles.images} />
-      <View style={{ flex: 1, gap: 10 }}>
-        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{image.user}</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.cardTitle}>{image.user}</Text>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ flex: 0.3, fontSize: 12 }}>Tags</Text>
-          <Text style={{ flex: 1, fontSize: 12, color: '#888' }}>{image.tags}</Text>
+          <Text style={styles.label}>Tags</Text>
+          <Text style={styles.value}>{image.tags}</Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ flex: 0.3, fontSize: 12 }}>Views</Text>
-          <Text style={{ flex: 1, fontSize: 12, color: '#888' }}>{image.views}</Text>
+          <Text style={styles.label}>Views</Text>
+          <Text style={styles.value}>{image.views}</Text>
         </View>
       </View>
+      <TouchableOpacity onPress={toggleBookmark} style={{ padding: 10 }}>
+        <FontAwesome
+          name={isBookmarked ? 'bookmark' : 'bookmark-o'}
+          size={24}
+          color={isBookmarked ? '#FFD700' : '#000'}
+        />
+      </TouchableOpacity>
     </View>
   )
 }
@@ -151,18 +189,36 @@ const styles = StyleSheet.create({
 
   cardContainer: {
     flexDirection: 'row',
+    backgroundColor: '#fff',
     padding: 10,
     gap: 10,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10
+    borderRadius: 10,
+    width: '100%',
+    maxWidth: 1024,
+    marginHorizontal: 'auto',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
   },
-
+  infoContainer: {
+    flex: 1,
+    padding: 5
+  },
   images: {
     width: 100,
     height: 100,
     borderRadius: 10
   },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: 'bold'
+  },
+  label: { flex: 0.3, fontSize: 12 },
+  value: { flex: 1, fontSize: 12, color: '#888' },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',

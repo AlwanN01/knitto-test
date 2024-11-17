@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { Provider } from 'react-redux'
@@ -29,16 +30,18 @@ export default function RootLayout() {
   }
 
   return (
-    <Provider store={store}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          {/* <Stack.Screen name='(tabs)' options={{ headerShown: false }} /> */}
-          <Stack.Screen name='index' options={{ headerShown: false, title: 'Home' }} />
-          <Stack.Screen name='login' options={{ headerShown: false, title: 'Login', headerTitle: 'Login Page' }} />
-          <Stack.Screen name='+not-found' />
-        </Stack>
-        <StatusBar style='auto' />
-      </ThemeProvider>
-    </Provider>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Provider store={store}>
+        <SafeAreaProvider>
+          <Stack>
+            {/* <Stack.Screen name='(tabs)' options={{ headerShown: false }} /> */}
+            <Stack.Screen name='index' options={{ headerShown: false, title: 'Home' }} />
+            <Stack.Screen name='login' options={{ headerShown: false, title: 'Login' }} />
+            {/* <Stack.Screen name='+not-found' /> */}
+          </Stack>
+          <StatusBar style='auto' />
+        </SafeAreaProvider>
+      </Provider>
+    </ThemeProvider>
   )
 }

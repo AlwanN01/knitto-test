@@ -11,7 +11,7 @@ export const useAuth = () => {
     React.useCallback(() => {
       const checkToken = async () => {
         const token = await getToken()
-        if (!token) router.push('/login')
+        if (!token) router.replace('/login')
         else SetToken(token)
       }
       checkToken()

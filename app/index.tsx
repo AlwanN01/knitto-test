@@ -50,7 +50,9 @@ export default function HomePage() {
   }, [data])
 
   const handleSearch = () => {
-    setState({ searchTerm: textSearch, images: [] })
+    if (textSearch !== searchTerm) {
+      setState({ searchTerm: textSearch, page: 1, images: [] })
+    }
   }
 
   const handleScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {

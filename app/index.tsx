@@ -90,7 +90,7 @@ export default function HomePage() {
         </Pressable>
       </View>
       {(!token || isLoading || isFetching) && (
-        <ActivityIndicator style={{ position: 'absolute', top: '50%', left: '50%' }} size='large' />
+        <ActivityIndicator style={{ position: 'absolute', top: '50%', left: '50%', zIndex: 10 }} size='large' />
       )}
       <FlatList
         data={images}
@@ -98,7 +98,7 @@ export default function HomePage() {
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={{ gap: 10, margin: 10, paddingBottom: 30 }}
         onScroll={handleScroll}
-        // scrollEventThrottle={30}
+        scrollEventThrottle={30}
       />
     </SafeAreaView>
   )
@@ -217,19 +217,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold'
   },
-  label: { flex: 0.3, fontSize: 12 },
-  value: { flex: 1, fontSize: 12, color: '#888' },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    padding: 10,
-    width: '100%',
-    maxWidth: 1024,
-    marginHorizontal: 'auto',
-    pointerEvents: 'auto',
-    borderBottomWidth: 1,
-    borderColor: 'gray'
+  label: {
+    flex: 0.3,
+    fontSize: 12
+  },
+  value: {
+    flex: 1,
+    fontSize: 12,
+    color: '#888'
   },
   input: {
     flex: 1,
@@ -239,17 +234,12 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
     minWidth: 0
-    // fontFamily: 'Inter_500Medium',
   },
   searchButton: {
     borderRadius: 5,
     padding: 10
   },
   LogoutButton: {
-    // backgroundColor: '#d32f2f',
-    // paddingVertical: 10,
-    // paddingHorizontal: 20,
-    // borderRadius: 8,
     marginHorizontal: 10,
     textAlign: 'center'
   }

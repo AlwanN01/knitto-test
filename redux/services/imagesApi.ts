@@ -1,7 +1,6 @@
 import { axiosBaseQuery } from '@/redux/axiosBaseQuery'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-const key = process.env.EXPO_PUBLIC_PIXABAY_API_KEY!
 export const imagesApi = createApi({
   reducerPath: 'imagesApi',
   baseQuery: axiosBaseQuery({ baseUrl: 'https://pixabay.com/api' }),

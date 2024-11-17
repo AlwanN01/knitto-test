@@ -10,12 +10,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
 
-   ```bash
-    npx expo start
-   ```
-3. **Create Environment Variables**
+2. **Create Environment Variables**
 
    Sebelum memulai aplikasi, Anda perlu mengatur variabel lingkungan dengan membuat file `.env.local` berdasarkan file `.env.example`.
 
@@ -44,6 +40,13 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
      # Environment variables
      .env.local
      ```
+
+3. Start the app
+
+   ```bash
+    npx expo start
+   ```
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
@@ -67,7 +70,3 @@ Join our community of developers creating universal apps.
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
-
-Tentu! Berikut adalah versi **README** Anda yang telah diperbarui dengan instruksi untuk membuat file `.env.local` berdasarkan file `.env.example`. Instruksi ini akan membantu Anda atau pengembang lain untuk dengan mudah mengatur variabel lingkungan yang diperlukan untuk proyek Anda.
-
----
